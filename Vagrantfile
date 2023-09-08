@@ -12,6 +12,8 @@ Vagrant.configure("2") do |config|
     cfg.vm.network "forwarded_port", guest: 22,host: 60010, auto_correct: true, id:"ssh"
     cfg.vm.synced_folder "../data", "/vagrant", disabled: true
     cfg.vm.provision "shell", path: "install_pkg.sh"
+    cfg.vm.provision "file", source: "ping_2_nds.sh", destination: "ping_2_nds.sh"
+    cfg.vm.provision "shell", path:"config.sh"
   end
 
   (1..3).each do |i|
@@ -24,8 +26,8 @@ Vagrant.configure("2") do |config|
         vb.customize = ["modifyvm", :id, "--groups", "/k8s-SM(github_Sysnet4Admin)"]
       end
       cfg.vm.host_name = "w#{i}-k8s"
-      cfg.vm.network "private network", ip: "192.168.56.10#{i}"
-      cgf.vm.network "forwarded_port" guest: 22, host: "6010#{i}", auto_correct: true, id: "ssh#{i}"
+      cfg.vm.network "private_network", ip: "192.168.56.10#{i}"
+      cfg.vm.network "forwarded_port", guest: 22, host: "6010#{i}", auto_correct: true, id: "ssh#{i}"
       cfg.vm.synced_folder "../data", "/vagrant", disabled: true
       cfg.vm.provision "shell", path: "install_pkg.sh"
     end
